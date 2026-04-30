@@ -1,4 +1,4 @@
- / Proyecto: Cajero Automatico
+// Proyecto: Cajero Automatico
 // Hecho en C
 
 #include <stdio.h>
@@ -21,20 +21,20 @@ struct Usuario usuarios[TOTAL_USUARIOS] = {
     {"juan",  "juan01", "Juan Herrera",      500.00}
 };
 
-// prototipo de la funcion de login
-int iniciar_sesion();
+int  iniciar_sesion();
+void mostrar_menu();
+void consultar_saldo(int idx);
 
 int main() {
     int idx;
+    int opcion;
 
     printf("====================================\n");
     printf("     CAJERO AUTOMATICO DIGITAL      \n");
     printf("====================================\n\n");
 
-    // llamar la funcion de login y guardar que usuario entro
     idx = iniciar_sesion();
 
-    // si devuelve -1 es porque fallo el login
     if (idx == -1) {
         printf("Acceso denegado.\n");
         return 0;
@@ -42,38 +42,69 @@ int main() {
 
     printf("\nBienvenido %s!\n", usuarios[idx].nombre);
 
+    // el menu se repite hasta que el usuario elija salir
+    opcion = 0;
+    while (opcion != 4) {
+        mostrar_menu();
+
+        printf("Opcion: ");
+        scanf("%d", &opcion);
+
+        if (opcion == 1) {
+            consultar_saldo(idx);
+        } else if (opcion == 4) {
+            printf("\nHasta luego!\n");
+        } else {
+            printf("\nEsa opcion no existe.\n\n");
+        }
+    }
+
     return 0;
 }
 
-// funcion de inicio de sesion
-// retorna el indice del usuario si entro bien, o -1 si fallo
 int iniciar_sesion() {
     char usu[30];
     char pass[30];
     int i;
     int intentos = 0;
 
-    // le doy 3 intentos al usuario
     while (intentos < 3) {
         printf("Usuario   : ");
         scanf("%s", usu);
         printf("Contrasena: ");
         scanf("%s", pass);
 
-        // busco el usuario en el arreglo
         i = 0;
         while (i < TOTAL_USUARIOS) {
             if (strcmp(usuarios[i].usuario, usu) == 0 &&
                 strcmp(usuarios[i].contrasena, pass) == 0) {
-                return i; // lo encontre
+                return i;
             }
             i++;
         }
 
-        // si llega aqui es que no coincidio
         intentos++;
         printf("\nDatos incorrectos. Le quedan %d intento(s).\n\n", 3 - intentos);
     }
 
     return -1;
+}
+
+// muestra las opciones del menu
+void mostrar_menu() {
+    printf("\n====================================\n");
+    printf("           MENU PRINCIPAL           \n");
+    printf("====================================\n");
+    printf("  1. Ver saldo\n");
+    printf("  2. Depositar\n");
+    printf("  3. Retirar\n");
+    printf("  4. Salir\n");
+    printf("====================================\n");
+}
+
+// muestra el saldo del usuario
+void consultar_saldo(int idx) {
+    printf("\n-- Saldo --\n");
+    printf("Nombre : %s\n", usuarios[idx].nombre);
+    printf("Saldo  : $ %.2f\n\n", usuarios[idx].saldo);
 }
