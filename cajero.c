@@ -24,6 +24,8 @@ struct Usuario usuarios[TOTAL_USUARIOS] = {
 int  iniciar_sesion();
 void mostrar_menu();
 void consultar_saldo(int idx);
+void depositar(int idx);
+void retirar(int idx);
 
 int main() {
     int idx;
@@ -42,7 +44,6 @@ int main() {
 
     printf("\nBienvenido %s!\n", usuarios[idx].nombre);
 
-    // el menu se repite hasta que el usuario elija salir
     opcion = 0;
     while (opcion != 4) {
         mostrar_menu();
@@ -52,6 +53,10 @@ int main() {
 
         if (opcion == 1) {
             consultar_saldo(idx);
+        } else if (opcion == 2) {
+            depositar(idx);
+        } else if (opcion == 3) {
+            retirar(idx);
         } else if (opcion == 4) {
             printf("\nHasta luego!\n");
         } else {
@@ -90,7 +95,6 @@ int iniciar_sesion() {
     return -1;
 }
 
-// muestra las opciones del menu
 void mostrar_menu() {
     printf("\n====================================\n");
     printf("           MENU PRINCIPAL           \n");
@@ -102,9 +106,54 @@ void mostrar_menu() {
     printf("====================================\n");
 }
 
-// muestra el saldo del usuario
 void consultar_saldo(int idx) {
     printf("\n-- Saldo --\n");
     printf("Nombre : %s\n", usuarios[idx].nombre);
     printf("Saldo  : $ %.2f\n\n", usuarios[idx].saldo);
+}
+
+// funcion para depositar, le sumo el monto al saldo
+void depositar(int idx) {
+    double monto;
+
+    printf("\n-- Deposito --\n");
+    printf("Cuanto quiere depositar? $ ");
+    scanf("%lf", &monto);
+
+    // verifico que no metan un numero raro
+    if (monto <= 0) {
+        printf("El monto tiene que ser mayor a cero.\n\n");
+        return;
+    }
+
+    usuarios[idx].saldo = usuarios[idx].saldo + monto;
+
+    printf("Deposito realizado!\n");
+    printf("Saldo nuevo: $ %.2f\n\n", usuarios[idx].saldo);
+}
+
+// funcion para retirar, verifico que haya plata antes de restar
+void retirar(int idx) {
+    double monto;
+
+    printf("\n-- Retiro --\n");
+    printf("Cuanto quiere retirar? $ ");
+    scanf("%lf", &monto);
+
+    if (monto <= 0) {
+        printf("El monto tiene que ser mayor a cero.\n\n");
+        return;
+    }
+
+    // si el monto es mayor al saldo no lo dejo retirar
+    if (monto > usuarios[idx].saldo) {
+        printf("No tiene suficiente saldo.\n");
+        printf("Su saldo es: $ %.2f\n\n", usuarios[idx].saldo);
+        return;
+    }
+
+    usuarios[idx].saldo = usuarios[idx].saldo - monto;
+
+    printf("Retiro exitoso!\n");
+    printf("Saldo nuevo: $ %.2f\n\n", usuarios[idx].saldo);
 }
